@@ -9,6 +9,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "antd": "^4.14.1",
+    "axios": "^0.21.1",
     "craco-less": "^1.17.1",
     "pubsub-js": "^1.9.3",
     "react": "^17.0.2",
@@ -48,4 +49,5 @@
   "devDependencies": {
     "redux-devtools-extension": "^2.13.9"
   }
+
 }

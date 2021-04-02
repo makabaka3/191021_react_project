@@ -1,16 +1,31 @@
 import React, { Component } from 'react'
 import './login.less'
 import logo from './images/logo.png'
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
+import {reqLogin} from '../../ajax/index'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
+
+//从Form上获取item（antd）
 const {Item} = Form
 
-export default class Login extends Component {
 
-  onFinish = (values) => {
-    console.log('Received values of form: ', values);
+export default class Login extends Component {
+//表单提交的回调
+  onFinish = async(values) => {
+    const {username,password}=values
+    let result =await reqLogin(username,password)
+    const {status,data,msg} = result
+    if(status===0){
+      //success
+      message.success('登录成功！')
+      this.props.history.replace('/admin') 
+    }else{
+      //false
+      message.warning(msg)
+    }
   };
+
   validatorpwd = (rule,value)=>{
     if(!value){
       return Promise.reject('密码不能为空')
