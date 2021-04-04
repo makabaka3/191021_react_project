@@ -2,7 +2,10 @@ import React, { Component } from 'react'
 import './login.less'
 import logo from './images/logo.png'
 import { Form, Input, Button, message } from 'antd';
+import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 import {reqLogin} from '../../ajax/index'
+import {createSaveUserAction} from '../../redux/actions/login'
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 
@@ -10,7 +13,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 const {Item} = Form
 
 
-export default class Login extends Component {
+class Login extends Component {
 //表单提交的回调
   onFinish = async(values) => {
     const {username,password}=values
@@ -19,7 +22,9 @@ export default class Login extends Component {
     if(status===0){
       //success
       message.success('登录成功！')
-      this.props.history.replace('/admin') 
+      console.log(data);
+      this.props.save(data)//向redux保存用户信息
+      // this.props.history.replace('/admin') 
     }else{
       //false
       message.warning(msg)
@@ -36,6 +41,9 @@ export default class Login extends Component {
   }
 
   render() {
+    if(this.props.isLogin) return <Redirect to = '/admin'/>
+
+
     return (
       <div className="login"> 
         <header className="login-header">
@@ -54,7 +62,7 @@ export default class Login extends Component {
             name="username"
             rules={[
               { required: true, message: 'Please input your Username!' },
-              {max:12,message:'用户小于12'},
+              {max:12,message:'用户名要小于12'},
               {pattern:/^\w+$/,message:'数字字母下划线'}
             ]}
           >
@@ -83,3 +91,8 @@ export default class Login extends Component {
     )
   }
 }
+
+export default connect(
+  (state)=>({isLogin:state.userInfo.isLogin}),//用于传递状态给ui
+  {save:createSaveUserAction}//用于传递状态的方法给ui
+)(Login)
