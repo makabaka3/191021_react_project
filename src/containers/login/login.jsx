@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './login.less'
-import logo from './images/logo.png'
+import logo from '../../static/imgs/logo.png'
 import { Form, Input, Button, message } from 'antd';
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
@@ -42,7 +42,6 @@ class Login extends Component {
 
   render() {
     if(this.props.isLogin) return <Redirect to = '/admin'/>
-
 
     return (
       <div className="login"> 

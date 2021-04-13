@@ -4,3 +4,12 @@
 .admin-root .admin-sider {
   color: white;
 }
+.admin-root .admin-content {
+  height: 100px;
+  background-color: white;
+  margin: 20px;
+  margin-bottom: 0px;
+}
+.admin-root .foot-text {
+  text-align: center;
+}
