@@ -7,3 +7,6 @@
   display: flex;
   justify-content: left;
 }
+.detail-item img {
+  width: 220px;
+}
