@@ -16,25 +16,25 @@ export default class PicturesWall extends Component {
   state = {
     previewVisible: false,
     previewImage: '',
-    fileList: [],
+    fileList: []//图片对象，里面有name， url
 	};
+  //复现图片
+  setImgs = (imgNameArr)=>{
+    let result = []
+    imgNameArr.forEach((imgName,index)=>{
+      result.push({uid:-index,name:imgName,url:`http://localhost:4000/upload/${imgName}`})
+    })
+    this.setState({fileList:result})
+  }
 
-	setImgs = (imgNameArr)=>{
-		let result = []
-		imgNameArr.forEach((imgName,index)=>{
-			result.push({uid:-index,name:imgName,url:`/upload/${imgName}`})
-		})
-		this.setState({fileList:result})
-	}
-	
-	getImgNames = ()=>{
-		let result = []
-		this.state.fileList.forEach((imgObj)=>{
-			result.push(imgObj.name)
-		})
-		return result
-	}
-
+  getImgNames = ()=>{
+    let result = []
+    this.state.fileList.forEach((imgObj)=>{
+      result.push(imgObj.name)
+    })
+    return result
+  }
+  
   handleCancel = () => this.setState({ previewVisible: false });
 
   handlePreview = async file => {

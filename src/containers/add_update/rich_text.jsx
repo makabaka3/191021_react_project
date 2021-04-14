@@ -9,7 +9,6 @@ export default class EditorConvertToHTML extends Component {
   state = {
 		editorState: EditorState.createEmpty(),
 	}
-
 	setRichText = (html)=>{
     const contentBlock = htmlToDraft(html);
     if (contentBlock) {

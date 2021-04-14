@@ -13,6 +13,8 @@
     "craco-less": "^1.17.1",
     "dayjs": "^1.10.4",
     "draft-js": "^0.11.7",
+    "draftjs-to-html": "^0.9.1",
+    "html-to-draftjs": "^1.5.0",
     "jsonp": "^0.2.1",
     "nprogress": "^0.2.0",
     "pubsub-js": "^1.9.3",
