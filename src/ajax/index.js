@@ -41,4 +41,5 @@ export const reqAddCategory = (categoryName) => myAxios.post('/manage/category/a
   export const reqAddProduct = (productObj)=> myAxios.post('/manage/product/add',productObj)
   //请求修改商品
   export const reqUpdateProduct = (productObj) => myAxios.post('/manage/product/update',productObj)
-  
+  //请求所有角色列表
+  export const reqRoleList = () => myAxios.get('/manage/role/list')
