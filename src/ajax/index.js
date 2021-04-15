@@ -2,6 +2,7 @@
 import myAxios from './myAxios'
 import jsonp from 'jsonp'
 import {message} from 'antd'
+import store from '../redux/stroe'
 import {LOCATION,KEY,WEATHER_URL} from '../config'
 
 //请求登录
@@ -43,3 +44,10 @@ export const reqAddCategory = (categoryName) => myAxios.post('/manage/category/a
   export const reqUpdateProduct = (productObj) => myAxios.post('/manage/product/update',productObj)
   //请求所有角色列表
   export const reqRoleList = () => myAxios.get('/manage/role/list')
+  //请求添加角色
+  export const reqAddRole = ({roleName}) =>myAxios.post('/manage/role/add',{roleName})
+  //请求给某个角色授权
+  export const reqAuthRole = (_id,menus) => {
+    const {username} = store.getState().userInfo.user
+    return myAxios.post('/manage/role/update',{_id,menus,auth_name:username,auth_time:Date.now()})
+  }

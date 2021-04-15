@@ -1,26 +1,87 @@
 import React, { Component } from 'react'
-import { Card,Button,Table, message} from 'antd';
+import { Card,Button,Table, message, Modal,Form,Input,Tree} from 'antd';
 import {PlusCircleOutlined} from '@ant-design/icons';
 import dayjs from 'dayjs'
-import {reqRoleList} from '../../ajax/index'
+import {reqRoleList,reqAddRole,reqAuthRole} from '../../ajax/index'
+import treeData from '../../config/tree_config'
 
+const {Item} = Form
 export default class Role extends Component {
   state = {
-    roleList:[]
+    roleList:[],//角色列表
+    visibleAdd:false,//是否展示新增弹窗
+    visibleAuth:false,
+    checkedKeys:['home'],
+    id:''
   }
+  //展示新增弹窗
+  showAddModal = () => {
+    this.setState({visibleAdd: true});
+  };
+  //新增弹窗—确认按钮的回调
+  handleAddOk = async() => {
+    //获取表单数据
+    let values = this.refs.add_form.getFieldsValue()
+    let result = await reqAddRole(values)
+    const {status,data,msg} = result
+    if(status === 0){
+      message.success('添加成功')
+      //坑！有些时候从state中获取对象类型数据的时候最好断开引用
+      let roleList =[...this.state.roleList]
+      roleList.unshift(data)
+      this.setState({roleList})
+      //重置表单
+      this.refs.add_form.resetFields()
+    }else{
+      message.error(msg)
+    }
+    this.setState({visible: false});
+  };
+  //展示授权弹窗
+  showAuthModal = (id)=>{
+    let result = this.state.roleList.find((roleObj)=>{
+      return id === roleObj._id
+    })
+    let {menus} = result
+    if(menus.indexOf('home') === -1) menus.push('home')
+    if(result){
+      this.setState({visibleAuth: true,id,checkedKeys:menus})
+    }
+  }
+  
+  //授权弹窗-确认按钮的回调
+  handleAuthOk = async() => {
+    this.setState({visibleAuth:false})
+    const {checkedKeys,id} = this.state
+    let {status,msg} = await reqAuthRole(id,checkedKeys)
+    if(status === 0){
+      message.success('授权成功')
+      //刷新页面
+      this.getRoleList()
+    }else{
+      message.error(msg)
+    }
+  };
+  //获取角色列表
   getRoleList = async()=>{
     let result = await reqRoleList()
     const {status,data,msg} = result
     if(status===0){
-      this.setState({roleList:data})
+      this.setState({roleList:data.reverse()})
     }else{
       message.error(msg)
     }
   }
+  onCheck = (checkedArr)=>{
+    this.setState({checkedKeys:checkedArr})
+  }
+
   componentDidMount(){
     this.getRoleList()
   }
+
   render() {
+    
     const columns = [
       {
         title: '角色名称',
@@ -37,7 +98,7 @@ export default class Role extends Component {
         title: '授权时间',
         dataIndex: 'auth_time',
         key: 'auth_time',
-        date:(a)=>a? dayjs(a).format('YYYY年 MM月 DD日 HH:mm:ss'):'暂未授权'
+        render:(a)=>a? dayjs(a).format('YYYY年 MM月 DD日 HH:mm:ss'):'暂未授权'
       },
       {
         title: '授权人',
@@ -47,31 +108,70 @@ export default class Role extends Component {
       },
       {
         title: '操作',
-        // dataIndex: 'auth_name',
+        dataIndex: '_id',
         key: 'opera',
         width:'10%',
         align:'center',
-        render:()=><Button type="link">设置权限</Button>
+        render:(id)=><Button type="link" onClick={()=>{this.showAuthModal(id)}}>设置权限</Button>
       }
     ]
     return (
-      <Card 
-        title={
-          <div>
-            <Button type="primary">
-            <PlusCircleOutlined />
-            新增角色
-            </Button>
-          </div>
-        }
-        extra={<a href="#">More</a>} 
-      >
-        <Table 
-          dataSource={this.state.roleList} 
-          columns={columns} 
-          bordered
-        />
+      <div>
+        <Card 
+          title={
+            <div>
+              <Button onClick ={this.showAddModal} type="primary">
+              <PlusCircleOutlined />
+              新增角色
+              </Button>
+            </div>
+          }
+          extra={<a href="#">More</a>} 
+        >
+          <Table 
+            dataSource={this.state.roleList} 
+            columns={columns} 
+            bordered
+            rowKey="_id"
+          />
         </Card>
+        {/* 新增角色的弹窗 */}
+        <Modal
+          title="新增角色"
+          visible={this.state.visibleAdd}
+          onOk={this.handleAddOk}
+          onCancel={()=>{this.refs.add_form.resetFields();this.setState({visibleAdd: false});}}
+          okText="确认"
+          cancelText="取消"
+        >
+          <Form ref="add_form">
+            <Item
+              name="roleName"
+              rules={[{required:true,message:"角色名必须填写"}]}
+            >
+              <Input placeholder="请输入角色名"/>
+            </Item>
+          </Form>
+        </Modal>
+        <Modal
+          title="设置权限"
+          visible={this.state.visibleAuth}
+          onOk={this.handleAuthOk}
+          onCancel={()=>{this.setState({visibleAuth: false});}}
+          okText="确认"
+          cancelText="取消"
+        >
+          
+          <Tree 
+          onCheck ={this.onCheck}
+          checkable 
+          defaultExpandAll
+          treeData={treeData}
+          checkedKeys={this.state.checkedKeys}
+          />
+        </Modal>
+      
+      </div>
     )
   }
 }
