@@ -43,20 +43,20 @@ export default class User extends Component {
       message.error(msg)
     }
   }
-  showModal = () => {
-    this.user = null
-    this.setState({
-      visible: true,
-    });
-  };
-  //显示修改用户界面
-  showUpdate = (user) => {
-    // 保存user
-    this.user = user
-    this.setState({
-      visible: true
-    })
+//展示弹窗
+showModal = (userObj) => {
+  const {username,phone} = userObj //尝试着获取_id和name，若_id和name均存在，那么是修改分类
+  if(username){
+    //能进入此判断，就以为是修改操作
+    this.username = username //在实例身上缓存要修改分类的名字...
+    this.phone = phone
+    this.isUpdate = true //实例身上标识：更新
+    const {userForm} = this.refs //获取Form节点(第一次获取不到)
+    if(userForm) userForm.setFieldsValue({username,phone})//第一次以后靠这行代码回显数据
   }
+  this.setState({visible: true}); //更改状态，展示弹窗
+};
+  
   handleOk = async() => {
     const userObj = this.refs.form.getFieldsValue()
     let {status,data,msg} = await reqAddUser(userObj)
@@ -72,8 +72,12 @@ export default class User extends Component {
   };
 
   handleCancel = () => {
+    this.refs.userForm.setFieldsValue({username:''})
+    this.isUpdate = false
+    this.username = ''
     this.setState({ visible: false });
   };
+
   componentDidMount(){
     this.getUserList()
   }
@@ -114,7 +118,7 @@ export default class User extends Component {
         align:'center',
         render:(user)=>(
           <div>
-            <Button onClick={()=>{this.showUpdate(user)}} type="link">修改</Button>
+            <Button onClick={()=>{this.showModal(user)}} type="link">修改</Button>
             <Button  onClick ={()=>{this.clickDelete(user)}} type="link">删除</Button>
           </div>
         )
@@ -148,7 +152,14 @@ export default class User extends Component {
         okText="确定"
         cancelText="取消"
         >
-          <Form ref="form">
+          <Form 
+            ref="userForm"
+            initialValues={{
+							username:this.username,
+              phone:this.phone
+              // phone:this.user.phone
+						}}
+          >
             <Item
             name="username"
             label="用户名"
@@ -180,15 +191,15 @@ export default class User extends Component {
             </Item>
           
             <Item
-            name="phone"
-            label="手机号"
-            labelAlign="left"
-            labelCol={{span:4}}
-            wrapperCol={{span:12}}
-            rules={[
-              {required: true, message: '手机号必须输入' },
-            ]}
-          >
+              name="phone"
+              label="手机号"
+              labelAlign="left"
+              labelCol={{span:4}}
+              wrapperCol={{span:12}}
+              rules={[
+                {required: true, message: '手机号必须输入' },
+              ]}
+            >
             <Input placeholder="请输入手机号"/>
           </Item>
           
