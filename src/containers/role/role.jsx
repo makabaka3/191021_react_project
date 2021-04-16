@@ -126,7 +126,6 @@ export default class Role extends Component {
               </Button>
             </div>
           }
-          extra={<a href="#">More</a>} 
         >
           <Table 
             dataSource={this.state.roleList} 

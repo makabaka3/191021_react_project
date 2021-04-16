@@ -34,6 +34,7 @@ class AddUpdate extends Component {
       message.error(msg)
     }
   }
+  
   createOption = ()=>{
     return this.props.categoryList.map((categoryObj)=>{
 

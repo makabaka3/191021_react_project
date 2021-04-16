@@ -51,3 +51,7 @@ export const reqAddCategory = (categoryName) => myAxios.post('/manage/category/a
     const {username} = store.getState().userInfo.user
     return myAxios.post('/manage/role/update',{_id,menus,auth_name:username,auth_time:Date.now()})
   }
+  //请求角色列表，也包含角色列表
+  export const reqUserList = () => myAxios.get('/manage/user/list')
+  //添加用户
+  export const reqAddUser = (userObj) => myAxios.post('/manage/user/add',userObj)
