@@ -3,6 +3,7 @@ import {Button, Card,Table,Modal,Form,Input,Select, message} from 'antd'
 import {reqUserList,reqAddUser,reqDeleteUser} from '../../ajax/index'
 import dayjs from 'dayjs'
 import {PlusOutlined} from '@ant-design/icons';
+import {PAGE_SIZE} from '../../config/index'
 
 const {Item} = Form
 const {Option} = Select
@@ -43,11 +44,19 @@ export default class User extends Component {
     }
   }
   showModal = () => {
+    this.user = null
     this.setState({
       visible: true,
     });
   };
-
+  //显示修改用户界面
+  showUpdate = (user) => {
+    // 保存user
+    this.user = user
+    this.setState({
+      visible: true
+    })
+  }
   handleOk = async() => {
     const userObj = this.refs.form.getFieldsValue()
     let {status,data,msg} = await reqAddUser(userObj)
@@ -69,6 +78,7 @@ export default class User extends Component {
     this.getUserList()
   }
   render() {
+    const user = this.user || {}
     const columns = [
       {
         title: '用户名',
@@ -104,7 +114,7 @@ export default class User extends Component {
         align:'center',
         render:(user)=>(
           <div>
-            <Button onClick={()=>{this.setState({visible:true})}} type="link">修改</Button>
+            <Button onClick={()=>{this.showUpdate(user)}} type="link">修改</Button>
             <Button  onClick ={()=>{this.clickDelete(user)}} type="link">删除</Button>
           </div>
         )
@@ -124,12 +134,14 @@ export default class User extends Component {
             rowKey="_id" 
             bordered
             dataSource={this.state.users} 
-            columns={columns} 
+            columns={columns}
+            pagination={{ defaultPageSize: PAGE_SIZE, showQuickJumper: true }}
+
           />
         </Card>
       {/* 新增用户弹窗 */}
         <Modal
-        title="新增用户"
+        title={user._id?'修改用户':'添加用户'}
         visible={this.state.visible}
         onOk={this.handleOk}
         onCancel={this.handleCancel}
