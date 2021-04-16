@@ -55,3 +55,9 @@ export const reqAddCategory = (categoryName) => myAxios.post('/manage/category/a
   export const reqUserList = () => myAxios.get('/manage/user/list')
   //添加用户
   export const reqAddUser = (userObj) => myAxios.post('/manage/user/add',userObj)
+  // 获取所有用户的列表
+  // export const reqUsers = () => myAxios.get('/manage/user/list')
+  // 删除指定用户
+  export const reqDeleteUser = (userId) =>myAxios.post('/manage/user/delete', {userId})
+  // // 添加/更新用户
+  // export const reqAddOrUpdateUser = (user) => myAxios.post('/manage/user/'+(user._id ? 'update' : 'add'), user)

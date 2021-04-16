@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {Button, Card,Table,Modal,Form,Input,Select, message} from 'antd'
-import {reqUserList,reqAddUser} from '../../ajax/index'
+import {reqUserList,reqAddUser,reqDeleteUser} from '../../ajax/index'
 import dayjs from 'dayjs'
 import {PlusOutlined} from '@ant-design/icons';
 
@@ -17,6 +17,20 @@ export default class User extends Component {
       return roleObj._id === id
     })
     if(result) return result.name
+  }
+  //删除用户
+  clickDelete = (user)=>{
+    Modal.confirm({
+      content:`确认删除${user.username}吗？`,
+      okText:"确认",
+      cancelText:"取消",
+      onOk: async()=>{
+        const result = await reqDeleteUser(user._id)
+        if(result.status === 0){
+          this.getUserList()
+        }
+      }
+    })
   }
 
   getUserList = async()=>{
@@ -88,10 +102,10 @@ export default class User extends Component {
         // dataIndex: 'address',
         key: 'opera',
         align:'center',
-        render:()=>(
+        render:(user)=>(
           <div>
             <Button onClick={()=>{this.setState({visible:true})}} type="link">修改</Button>
-            <Button type="link">删除</Button>
+            <Button  onClick ={()=>{this.clickDelete(user)}} type="link">删除</Button>
           </div>
         )
       }
