@@ -58,13 +58,13 @@ showModal = (userObj) => {
 };
   
   handleOk = async() => {
-    const userObj = this.refs.form.getFieldsValue()
-    let {status,data,msg} = await reqAddUser(userObj)
+    const userObj = this.refs.userForm.getFieldsValue()
+    let {status,msg} = await reqAddUser(userObj)
     if(status === 0){
       message.success('添加用户成功')
       //刷新列表
       this.getUserList()
-      this.refs.form.resetFields()
+      this.refs.userForm.resetFields()
       this.setState({ visible:false});
     }else{
       message.error(msg)
